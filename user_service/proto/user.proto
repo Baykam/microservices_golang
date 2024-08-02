@@ -1,0 +1,57 @@
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+
+package userServiceProto;
+
+option go_package = "./;userServiceProto";
+
+service UserService{
+    rpc GetUser (getUser) returns (User);
+    rpc VerificationKey (PhoneVerificationReq) returns (PhoneVerificationRes);
+    rpc PhoneUserCreate (UserPhoneCreateReq) returns (UserPhoneCreateRes);
+    rpc UpdateUserData (PostUser) returns (User);
+}
+
+message getUser {
+    string token = 1;
+}
+
+message PostUser {
+    string phone = 2;
+    string email = 3;
+    string username = 4;
+    google.protobuf.Timestamp UpdatedAt = 5;
+    string userId = 6;
+}
+
+message User{
+    string userId = 1;
+    string phone = 2;
+    string token = 3;
+    string email = 4;
+    string username = 8;
+    google.protobuf.Timestamp CreatedAt = 5;
+    google.protobuf.Timestamp UpdatedAt = 6;
+    string id = 7;
+}
+message PhoneVerificationReq {
+    string phone = 1;
+}
+
+message PhoneVerificationRes {
+    string VerificationKey = 1;
+}
+
+
+message UserPhoneCreateReq{
+    string sms =1;
+    string verificationKey = 2;
+    int64 userType =3;
+}
+
+message UserPhoneCreateRes {
+    string AccessToken =1;
+    string RefreshToken = 2;
+    int64 userType =3;
+}

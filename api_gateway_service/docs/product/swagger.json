@@ -1,0 +1,9 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "hey there",
+        "title": "Tag Service Api",
+        "contact": {}
+    },
+    "paths": {}
+}
