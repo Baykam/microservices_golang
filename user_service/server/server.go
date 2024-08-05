@@ -36,8 +36,8 @@ type server struct {
 	postgresRepo repository.UserRepository
 }
 
-func NewServer(log logger.Logger) *server {
-	return &server{log: log, v: validator.New()}
+func NewServer(log logger.Logger, cfg config.Config) *server {
+	return &server{log: log, v: validator.New(), cfg: cfg}
 }
 
 func (s *server) Run() error {

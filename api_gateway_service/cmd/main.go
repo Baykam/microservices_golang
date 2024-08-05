@@ -4,17 +4,15 @@ import (
 	"flag"
 	"project-microservices/api_gateway_service/config"
 	"project-microservices/api_gateway_service/server"
+	_ "project-microservices/docs"
 	"project-microservices/pkg/logger"
 
-	_ "project-microservices/api_gateway_service/docs/user"
-
-	"github.com/gin-gonic/gin"
 	"github.com/pkg/errors"
-	_ "github.com/swaggo/swag"
 )
 
-// @title Tag Service Api
-// @Description hey there
+// @title API Gateway Service
+// @version 1.0
+// @description API Gateway Service için Swagger dokümantasyonu
 func main() {
 	flag.Parse()
 
@@ -25,9 +23,7 @@ func main() {
 
 	appLogger := logger.NewAppLogger(cfg.Logger)
 
-	engine := gin.Default()
-
-	sv := server.NewServer(appLogger, cfg, engine)
+	sv := server.NewServer(appLogger, cfg)
 	if err := sv.Run(); err != nil {
 		errors.Wrap(err, "Run.ApiGatewayService")
 	}

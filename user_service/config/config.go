@@ -11,6 +11,7 @@ import (
 	"project-microservices/pkg/probes"
 	productRedis "project-microservices/pkg/redis"
 	"project-microservices/pkg/tracing"
+	"strings"
 
 	"github.com/pkg/errors"
 	"github.com/spf13/viper"
@@ -41,12 +42,12 @@ type MongoCollections struct {
 }
 
 type ServiceSettings struct {
-	RedisProductFixKey string `mapstructure:"redisProductFixKey"`
+	RedisProductFixKey string `mapstructure:"redisProductPrefixKey"`
 }
 
 type KafkaTopics struct {
 	UserCreated productKafka.TopicConfig `mapstructure:"userCreated"`
-	UserUpdated productKafka.TopicConfig `mapsstructure:"userUpdated"`
+	UserUpdated productKafka.TopicConfig `mapstructure:"userUpdated"`
 	UserDeleted productKafka.TopicConfig `mapstructure:"userDeleted"`
 }
 
@@ -62,7 +63,8 @@ func InitConfig() (*Config, error) {
 			if err != nil {
 				return nil, errors.Wrap(err, "os.Getwd")
 			}
-			configPath = fmt.Sprintf("%s/user_service/config/config.yaml", getwd)
+			trimmedWd := strings.TrimSuffix(getwd, "/cmd")
+			configPath = fmt.Sprintf("%s/config/config.yaml", trimmedWd)
 		}
 	}
 
@@ -78,7 +80,13 @@ func InitConfig() (*Config, error) {
 	if err := viper.Unmarshal(cfg); err != nil {
 		return nil, errors.Wrap(err, "viper.Unmarshal")
 	}
+	if err := setViperConfig(cfg); err != nil {
+		return nil, errors.Wrap(err, "setViperConfig")
+	}
+	return cfg, nil
+}
 
+func setViperConfig(cfg *Config) error {
 	grpcPort := os.Getenv(constants.GrpcPort)
 	if grpcPort != "" {
 		cfg.GRPC.Port = grpcPort
@@ -108,6 +116,5 @@ func InitConfig() (*Config, error) {
 	if jaegerAddr != "" {
 		cfg.Jaeger.HostPort = jaegerAddr
 	}
-
-	return cfg, nil
+	return nil
 }

@@ -9,7 +9,7 @@ probes:
   pprof: :6009
   prometheusPath: /metrics
   prometheusPort: :8009
-  checkIntervalSeconds: 10s
+  checkIntervalSeconds: 10
 kafka:
   brokers: [ "localhost:9092" ]
   groupID: user_microservice_consumer

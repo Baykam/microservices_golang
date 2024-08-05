@@ -2,22 +2,22 @@ package config
 
 import (
 	"errors"
-	"flag"
 	"fmt"
 	"os"
 	"project-microservices/pkg/constants"
 	"project-microservices/pkg/logger"
 	"project-microservices/pkg/probes"
 	"project-microservices/pkg/tracing"
+	"strings"
 
 	"github.com/spf13/viper"
 )
 
 var configPath string
 
-func init() {
-	flag.StringVar(&configPath, "config", "", "API Gateway microservice config path")
-}
+// func init() {
+// 	flag.StringVar(&configPath, "config", "", "API Gateway microservice config path")
+// }
 
 type Config struct {
 	ServiceName string          `mapstructure:"serviceName"`
@@ -58,13 +58,14 @@ func InitConfig() (*Config, error) {
 			if err != nil {
 				return nil, errors.Unwrap(err)
 			}
-			configPath = fmt.Sprintf("%s/api_gateway_service/config/config.yaml", getWd)
+			trimmedWd := strings.TrimSuffix(getWd, "/cmd")
+			configPath = fmt.Sprintf("%s/config/config.yaml", trimmedWd)
 		}
 	}
 
 	cfg := &Config{}
 
-	viper.SetConfigType(constants.Yaml)
+	viper.SetConfigType("yaml")
 	viper.SetConfigFile(configPath)
 
 	if err := viper.ReadInConfig(); err != nil {
@@ -74,6 +75,15 @@ func InitConfig() (*Config, error) {
 	if err := viper.Unmarshal(cfg); err != nil {
 		return nil, errors.Unwrap(err)
 	}
+
+	if err := setEnvOverrides(cfg); err != nil {
+		return nil, fmt.Errorf("error setting environment overrides: %w", err)
+	}
+
+	return cfg, nil
+}
+
+func setEnvOverrides(cfg *Config) error {
 	secretKey := os.Getenv(constants.SecretKey)
 	if secretKey != "" {
 		cfg.JWT.SecretKey = secretKey
@@ -83,14 +93,16 @@ func InitConfig() (*Config, error) {
 	if httpPort != "" {
 		cfg.Http.Port = httpPort
 	}
+
 	jaegerAddr := os.Getenv(constants.JaegerHostPort)
 	if jaegerAddr != "" {
 		cfg.Jaeger.HostPort = jaegerAddr
 	}
+
 	readerServicePort := os.Getenv(constants.UserService)
 	if readerServicePort != "" {
 		cfg.Grpc.UserServicePort = readerServicePort
 	}
 
-	return cfg, nil
+	return nil
 }

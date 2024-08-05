@@ -190,4 +190,4 @@
 
   networks:
     microservices:
-      name: microservices   
+      name: microservices

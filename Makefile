@@ -38,13 +38,18 @@ proto_user:
 	@echo Generating user messages microservice proto
 	cd user_service/proto && protoc --go_out=. --go-grpc_opt=require_unimplemented_servers=false --go-grpc_out=. user.proto
 
+
 # ==============================================================================
-# swagger
+# Swagger
 
-swagger_user:
+swagger:
 	@echo Starting swagger generating
-	swag init -g ./api_gateway_service/cmd/main.go -o ./api_gateway_service/docs/user/ --exclude ./api_gateway_service/internal/product
+	swag init -g **/**/*.go
 
-swagger_product:
-	@echo Starting swagger generating
-	swag init -g ./api_gateway_service/cmd/main.go -o ./api_gateway_service/docs/product/ --exclude ./api_gateway_service/internal/users
+# ==============================================================================
+# go mod
+
+tidy:
+	@echo Starting mod tidy
+	go mod tidy
+	

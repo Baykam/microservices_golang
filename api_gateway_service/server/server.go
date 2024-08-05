@@ -6,9 +6,10 @@ import (
 	"os/signal"
 	"project-microservices/api_gateway_service/config"
 	userConnection "project-microservices/api_gateway_service/connections"
-	userv1 "project-microservices/api_gateway_service/internal/user/delivery/http/v1"
+	userHttp "project-microservices/api_gateway_service/internal/user/delivery/http"
 	u "project-microservices/api_gateway_service/internal/user/service"
 	"project-microservices/api_gateway_service/metrics"
+	_ "project-microservices/docs"
 	"project-microservices/pkg/interceptors"
 	productKafka "project-microservices/pkg/kafka"
 	"project-microservices/pkg/logger"
@@ -29,8 +30,8 @@ type server struct {
 	engine      *gin.Engine
 }
 
-func NewServer(log logger.Logger, cfg *config.Config, engine *gin.Engine) *server {
-	return &server{log: log, cfg: cfg, v: validator.New(), engine: engine}
+func NewServer(log logger.Logger, cfg *config.Config) *server {
+	return &server{log: log, cfg: cfg, v: validator.New(), engine: gin.Default()}
 }
 
 func (s *server) Run() error {
@@ -51,9 +52,14 @@ func (s *server) Run() error {
 
 	s.userService = u.NewUserService(s.log, *s.cfg, kafkaProducers, userProtoService)
 
-	userV1 := userv1.NewUserHandlers(*s.cfg, s.log, *s.v, s.engine, &s.metrics, *s.userService)
-	userV1.Run()
+	users := userHttp.NewUserHandlers(*s.cfg, s.log, *s.v, s.engine, &s.metrics, *s.userService)
+	users.Run()
 
 	go s.runHttpServer()
+
+	// s.runHealthCheck(ctx)
+	// s.runMetrics(cancel)
+
+	<-ctx.Done()
 	return nil
 }
