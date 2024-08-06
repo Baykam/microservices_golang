@@ -38,6 +38,7 @@ func (u *userService) PhoneUserCreate(ctx context.Context, req *userServiceProto
 	if err != nil {
 		return nil, err
 	}
+
 	access, err := u.middle.GenerateNewToken(middleware.GenerateTokenRequest{
 		UserID:   userId,
 		TokenFor: middleware.Access,
@@ -47,6 +48,7 @@ func (u *userService) PhoneUserCreate(ctx context.Context, req *userServiceProto
 	if err != nil {
 		return nil, err
 	}
+
 	return &userServiceProto.UserPhoneCreateRes{
 		AccessToken:  access.TokenString,
 		RefreshToken: refresh.TokenString,

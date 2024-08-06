@@ -9,7 +9,7 @@ run_user_service:
 # ==============================================================================
 # Go migrate postgresql https://github.com/golang-migrate/migrate
 
-DB_NAME = products
+DB_NAME = microservice
 DB_HOST = localhost
 DB_PORT = 5432
 SSL_MODE = disable

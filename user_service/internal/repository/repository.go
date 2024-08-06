@@ -3,13 +3,11 @@ package repository
 import (
 	"context"
 	"database/sql"
-
-	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type userRepository struct {
-	sql   *sql.DB
-	mongo mongo.Client
+	sql *sql.DB
+	// mongo mongo.Client
 }
 
 type UserRepository interface {
@@ -17,7 +15,8 @@ type UserRepository interface {
 }
 
 func NewUserRepository(sql *sql.DB,
-	mongo mongo.Client,
+
+// mongo mongo.Client,
 ) UserRepository {
-	return &userRepository{sql: sql, mongo: mongo}
+	return &userRepository{sql: sql}
 }

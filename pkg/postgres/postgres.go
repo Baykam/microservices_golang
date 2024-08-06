@@ -5,6 +5,8 @@ import (
 	"database/sql"
 	"fmt"
 	"time"
+
+	_ "github.com/lib/pq"
 )
 
 type Config struct {
@@ -12,7 +14,7 @@ type Config struct {
 	Port     string `yaml:"port"`
 	User     string `yaml:"user"`
 	DBName   string `yaml:"dbName"`
-	SSLMode  bool   `yaml:"sslMode"`
+	SSLMode  string `yaml:"sslMode"`
 	Password string `yaml:"password"`
 }
 
@@ -25,14 +27,14 @@ const (
 	lazyConnect       = false
 )
 
-func ConnPostgres(cfg *Config) (*sql.DB, error) {
-	ctx := context.Background()
-	dataSourceName := fmt.Sprintf("host=%s port=%s user=%s dbname=%s password=%s sslmode=disable",
+func ConnPostgres(ctx context.Context, cfg *Config) (*sql.DB, error) {
+	dataSourceName := fmt.Sprintf("host=%s port=%s user=%s dbname=%s password=%s sslmode=%s",
 		cfg.Host,
 		cfg.Port,
 		cfg.User,
 		cfg.DBName,
 		cfg.Password,
+		cfg.SSLMode,
 	)
 
 	db, err := sql.Open("postgres", dataSourceName)

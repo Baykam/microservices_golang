@@ -5,14 +5,12 @@ import (
 	"database/sql"
 	"os"
 	"os/signal"
-	productKafka "project-microservices/pkg/kafka"
 	"project-microservices/pkg/logger"
 	mongodb "project-microservices/pkg/mongo"
 	"project-microservices/pkg/postgres"
 	productRedis "project-microservices/pkg/redis"
 	"project-microservices/user_service/config"
 	"project-microservices/user_service/internal/cache"
-	userKafkaConn "project-microservices/user_service/internal/delivery/kafka"
 	"project-microservices/user_service/internal/repository"
 	"project-microservices/user_service/internal/service"
 	"syscall"
@@ -34,6 +32,7 @@ type server struct {
 	mongo        *mongo.Client
 	cacheRepo    cache.UserCache
 	postgresRepo repository.UserRepository
+	userService  service.UserService
 }
 
 func NewServer(log logger.Logger, cfg config.Config) *server {
@@ -50,35 +49,41 @@ func (s *server) Run() error {
 		return errors.Wrap(err, "mongodb.NewMongoDbConn")
 	}
 	s.mongo = mongoClient
-	sql, err := postgres.ConnPostgres(s.cfg.Postgres)
+	sql, err := postgres.ConnPostgres(ctx, s.cfg.Postgres)
 	if err != nil {
 		return err
 	}
 	s.sql = sql
 
 	s.cacheRepo = cache.NewUserCache(s.log, &s.cfg, s.redis)
-	s.postgresRepo = repository.NewUserRepository(s.sql, *s.mongo)
+	s.postgresRepo = repository.NewUserRepository(s.sql)
 
-	userService := service.NewUserService(s.postgresRepo, s.cacheRepo)
+	s.userService = service.NewUserService(s.postgresRepo, s.cacheRepo, s.cfg)
 
-	userMessageProcessor := userKafkaConn.NewUserMessagesProcessor(s.log, &s.cfg, s.v, &userService)
+	// userMessageProcessor := userKafkaConn.NewUserMessagesProcessor(s.log, &s.cfg, s.v, s.userService)
 
-	kafkaConsumerGroup := productKafka.NewConsumerGroup(s.cfg.Kafka.Brokers, s.cfg.Kafka.GroupId, s.log)
-	go kafkaConsumerGroup.ConsumeTopic(ctx, s.getConsumerGroupTopics(), userKafkaConn.PoolSize, userMessageProcessor.ProcessMessages)
+	// kafkaConsumerGroup := productKafka.NewConsumerGroup(s.cfg.Kafka.Brokers, s.cfg.Kafka.GroupId, s.log)
+	// go kafkaConsumerGroup.ConsumeTopic(ctx, s.getConsumerGroupTopics(), userKafkaConn.PoolSize, userMessageProcessor.ProcessMessages)
 
-	if err := s.connectKafkaBrokers(ctx); err != nil {
-		return errors.Wrap(err, "server.connectKafkaBrokers")
-	}
-	defer s.kafka.Close()
+	// if err := s.connectKafkaBrokers(ctx); err != nil {
+	// 	return errors.Wrap(err, "server.connectKafkaBrokers")
+	// }
+	// defer s.kafka.Close()
 
-	closeGrpcServer, grpcServer, err := s.newUserGrpcServer()
-	if err != nil {
-		return err
-	}
-	defer closeGrpcServer()
+	// closeGrpcServer, grpcServer, err = s.newUserGrpcServer()
+	// if err != nil {
+	// 	return err
+	// }
+	// defer closeGrpcServer()
+	// defer grpcServer.GracefulStop()
+
+	go func() {
+		if err := s.newUserGrpcServer(); err != nil {
+			s.log.Fatal(err)
+		}
+	}()
 
 	<-ctx.Done()
-	grpcServer.GracefulStop()
 	s.log.Info("Shutting down gRPC server...")
 	return nil
 }

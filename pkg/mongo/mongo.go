@@ -2,6 +2,7 @@ package mongodb
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"go.mongodb.org/mongo-driver/mongo"
@@ -18,20 +19,23 @@ const (
 type Config struct {
 	Uri      string `mapstructure:"uri"`
 	User     string `mapstructure:"user"`
-	Password string `mapstructure:"pasword"`
+	Password string `mapstructure:"password"`
 	Db       string `mapstructure:"db"`
 }
 
 func NewMongoDbConn(ctx context.Context, cfg *Config) (*mongo.Client, error) {
-	client, err := mongo.Connect(
-		ctx,
-		options.Client().ApplyURI(cfg.Uri).
-			SetAuth(options.Credential{Username: cfg.User, Password: cfg.Password}).
-			SetConnectTimeout(connectTimeOut).
-			SetMaxConnIdleTime(macConnIdleTime).
-			SetMinPoolSize(minPoolSize).
-			SetMaxPoolSize(maxPoolSize),
-	)
+
+	clientOptions := options.Client().ApplyURI(cfg.Uri).
+		SetAuth(options.Credential{Username: cfg.User, Password: cfg.Password}).
+		SetConnectTimeout(connectTimeOut).
+		SetMaxConnIdleTime(macConnIdleTime).
+		SetMinPoolSize(minPoolSize).
+		SetMaxPoolSize(maxPoolSize)
+
+	fmt.Println(clientOptions)
+
+	client, err := mongo.Connect(ctx, clientOptions)
+
 	if err != nil {
 		return nil, err
 	}

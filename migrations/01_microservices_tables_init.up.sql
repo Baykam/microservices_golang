@@ -27,7 +27,7 @@ CREATE TABLE products
   id UUID PRIMARY KEY    DEFAULT uuid_generate_v4(),
   name VARCHAR(250),
   description VARCHAR(250),
-  userId REFERENCES users(id),
+  userId UUID REFERENCES users(id),
   created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );

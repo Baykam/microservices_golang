@@ -17,13 +17,13 @@ type userMessageProcessor struct {
 	log logger.Logger
 	cfg *config.Config
 	v   *validator.Validate
-	us  *service.UserService
+	us  service.UserService
 }
 
 func NewUserMessagesProcessor(log logger.Logger,
 	cfg *config.Config,
 	v *validator.Validate,
-	us *service.UserService) *userMessageProcessor {
+	us service.UserService) *userMessageProcessor {
 	return &userMessageProcessor{log: log, cfg: cfg, v: v, us: us}
 }
 

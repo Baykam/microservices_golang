@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"project-microservices/pkg/middleware"
+	"project-microservices/user_service/config"
 	"project-microservices/user_service/internal/cache"
 	"project-microservices/user_service/internal/repository"
 	userServiceProto "project-microservices/user_service/proto"
@@ -19,8 +20,9 @@ type userService struct {
 	repo   repository.UserRepository
 	cache  cache.UserCache
 	middle middleware.MiddlewareAuth
+	cfg    config.Config
 }
 
-func NewUserService(Repo repository.UserRepository, Cache cache.UserCache) UserService {
-	return &userService{repo: Repo, cache: Cache}
+func NewUserService(Repo repository.UserRepository, Cache cache.UserCache, cfg config.Config) UserService {
+	return &userService{repo: Repo, cache: Cache, cfg: cfg}
 }

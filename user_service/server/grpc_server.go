@@ -2,7 +2,6 @@ package server
 
 import (
 	"net"
-	"project-microservices/user_service/internal/service"
 	userServiceProto "project-microservices/user_service/proto"
 	"time"
 
@@ -24,11 +23,13 @@ const (
 	gRPCTime          = 10 * time.Minute
 )
 
-func (s *server) newUserGrpcServer() (func() error, *grpc.Server, error) {
+func (s *server) newUserGrpcServer() error {
 	lis, err := net.Listen("tcp", s.cfg.GRPC.Port)
+
 	if err != nil {
-		return nil, nil, errors.Wrap(err, "net.Listen")
+		return errors.Wrap(err, "net.Listen")
 	}
+
 	grpcServer := grpc.NewServer(grpc.KeepaliveParams(
 		keepalive.ServerParameters{
 			MaxConnectionIdle: maxConnectionIdle,
@@ -36,6 +37,7 @@ func (s *server) newUserGrpcServer() (func() error, *grpc.Server, error) {
 			MaxConnectionAge:  maxConnectionAge,
 			Time:              gRPCTime,
 		}),
+
 		grpc.UnaryInterceptor(grpc_middleware.ChainUnaryServer(
 			grpc_ctxtags.UnaryServerInterceptor(),
 			grpc_opentracing.UnaryServerInterceptor(),
@@ -44,14 +46,14 @@ func (s *server) newUserGrpcServer() (func() error, *grpc.Server, error) {
 		)),
 	)
 
-	userService := service.NewUserService(s.postgresRepo, s.cacheRepo)
-
-	userServiceProto.RegisterUserServiceServer(grpcServer, userService)
+	userServiceProto.RegisterUserServiceServer(grpcServer, s.userService)
 	grpc_prometheus.Register(grpcServer)
 
-	go func() {
-		s.log.Infof("Reader gRPC server is listening on port: %s", s.cfg.GRPC.Port)
-		s.log.Fatal(grpcServer.Serve(lis))
-	}()
-	return lis.Close, grpcServer, nil
+	// go func() {
+	// 	s.log.Infof("Reader gRPC server is listening on port: %s", s.cfg.GRPC.Port)
+	// 	s.log.Fatal(grpcServer.Serve(lis))
+	// }()
+
+	return grpcServer.Serve(lis)
+	// return lis.Close, grpcServer, nil
 }
