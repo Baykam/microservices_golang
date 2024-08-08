@@ -52,3 +52,28 @@ jaeger:
   serviceName: api_gateway_service
   hostPort: "localhost:6831"
   logSpans: false
+kafka:
+  brokers: [ "localhost:9092" ]
+  groupID: user_microservice_consumer
+  initTopics: true
+kafkaTopics:
+  userCreate:
+    topicName: user_create
+    partitions: 10
+    replicationFactor: 1
+  userUpdate:
+    topicName: user_update
+    partitions: 10
+    replicationFactor: 1
+  userCreated:
+    topicName: user_created
+    partitions: 10
+    replicationFactor: 1
+  userUpdated:
+    topicName: user_updated
+    partitions: 10
+    replicationFactor: 1
+  userDeleted:
+    topicName: user_deleted
+    partitions: 10
+    replicationFactor: 1  

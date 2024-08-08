@@ -18,13 +18,13 @@ type userMessageProcessor struct {
 	log logger.Logger
 	cfg *config.Config
 	v   *validator.Validate
-	us  service.UserService
+	us  *service.UserService
 }
 
 func NewUserMessagesProcessor(log logger.Logger,
 	cfg *config.Config,
 	v *validator.Validate,
-	us service.UserService) *userMessageProcessor {
+	us *service.UserService) *userMessageProcessor {
 	return &userMessageProcessor{log: log, cfg: cfg, v: v, us: us}
 }
 
@@ -40,7 +40,7 @@ func (u *userMessageProcessor) ProcessMessages(ctx context.Context, reader *kafk
 
 		message, err := reader.FetchMessage(ctx)
 		if err != nil {
-			// u.log.Infof("workerId : %v, err : %v", workerId, err)
+			u.log.Infof("workerId : %v, err : %v", workerId, err)
 			fmt.Printf("workerId : %v, err : %v", workerId, err)
 			continue
 		}
@@ -48,6 +48,7 @@ func (u *userMessageProcessor) ProcessMessages(ctx context.Context, reader *kafk
 		switch message.Topic {
 		case u.cfg.KafkaTopics.UserDeleted.TopicName:
 		case u.cfg.KafkaTopics.UserUpdated.TopicName:
+			u.updateUser(ctx, reader, message)
 		}
 	}
 }

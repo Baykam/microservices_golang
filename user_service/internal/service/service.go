@@ -1,28 +1,20 @@
 package service
 
 import (
-	"context"
-	"project-microservices/pkg/middleware"
 	"project-microservices/user_service/config"
 	"project-microservices/user_service/internal/cache"
+	"project-microservices/user_service/internal/commands"
+	"project-microservices/user_service/internal/queries"
 	"project-microservices/user_service/internal/repository"
-	userServiceProto "project-microservices/user_service/proto"
 )
 
-type UserService interface {
-	VerificationKey(ctx context.Context, req *userServiceProto.PhoneVerificationReq) (*userServiceProto.PhoneVerificationRes, error)
-	PhoneUserCreate(ctx context.Context, req *userServiceProto.UserPhoneCreateReq) (*userServiceProto.UserPhoneCreateRes, error)
-	GetUser(ctx context.Context, req *userServiceProto.GetUser) (*userServiceProto.User, error)
-	UpdateUserData(ctx context.Context, req *userServiceProto.PostUser) (*userServiceProto.User, error)
+type UserService struct {
+	Queries  queries.UserQueries
+	Commands commands.Commands
 }
 
-type userService struct {
-	repo   repository.UserRepository
-	cache  cache.UserCache
-	middle middleware.MiddlewareAuth
-	cfg    *config.Config
-}
-
-func NewUserService(Repo repository.UserRepository, Cache cache.UserCache, cfg *config.Config) UserService {
-	return &userService{repo: Repo, cache: Cache, cfg: cfg}
+func NewUserService(Repo repository.UserRepository, Cache cache.UserCache, cfg *config.Config) *UserService {
+	queries := queries.NewUserQueries(Repo, Cache, cfg)
+	commands := commands.NewUserCommands(Repo, Cache, cfg)
+	return &UserService{Queries: queries, Commands: commands}
 }

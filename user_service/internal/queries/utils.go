@@ -1,4 +1,4 @@
-package service
+package queries
 
 import "time"
 

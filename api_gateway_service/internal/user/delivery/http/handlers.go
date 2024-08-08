@@ -3,12 +3,13 @@ package userHttp
 import (
 	"net/http"
 	"project-microservices/api_gateway_service/config"
-	"project-microservices/api_gateway_service/dto"
 	"project-microservices/api_gateway_service/internal/user/service"
 	"project-microservices/api_gateway_service/metrics"
+	"project-microservices/dto"
 	"project-microservices/pkg/constants"
 	"project-microservices/pkg/logger"
 	"project-microservices/pkg/middleware"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
@@ -16,22 +17,22 @@ import (
 )
 
 type userHandlers struct {
-	cfg     config.Config
+	cfg     *config.Config
 	log     logger.Logger
 	v       validator.Validate
-	engine  *gin.RouterGroup
-	metrics *metrics.UserMetrics
-	us      service.UserService
+	engine  *gin.Engine
+	metrics metrics.UserMetrics
+	us      *service.UserService
 	middle  middleware.MiddlewareAuth
 }
 
 func NewUserHandlers(
-	cfg config.Config,
+	cfg *config.Config,
 	log logger.Logger,
 	v validator.Validate,
-	engine *gin.RouterGroup,
-	metrics *metrics.UserMetrics,
-	us service.UserService,
+	engine *gin.Engine,
+	metrics metrics.UserMetrics,
+	us *service.UserService,
 ) *userHandlers {
 	return &userHandlers{cfg: cfg, log: log, v: v, engine: engine, metrics: metrics, us: us}
 }
@@ -120,7 +121,7 @@ func (u *userHandlers) UpdateUser(c *gin.Context) {
 		TokenString: access,
 		UsedFor:     middleware.User,
 		TokenFor:    middleware.Access,
-	}, u.cfg.JWT.SecretKey)
+	}, u.cfg.ServiceName)
 	if err != nil {
 		u.log.WarnMsg("Validate Token", err)
 		u.traceError(span, err)
@@ -135,11 +136,18 @@ func (u *userHandlers) UpdateUser(c *gin.Context) {
 	}
 	req.UserId = userId.UserID
 
-	res, err := u.us.Queries.UpdateUser(ctx, req)
+	err = u.us.Commands.UpdateUser(ctx, req)
+
 	if err != nil {
 		u.log.WarnMsg("UpdateUser", err)
 		u.traceError(span, err)
 		return
+	}
+
+	res := &dto.User{
+		Phone:     req.Phone,
+		Email:     &req.Email,
+		UpdatedAt: time.Now(),
 	}
 
 	u.metrics.SuccessHttpRequests.Inc()
@@ -166,7 +174,7 @@ func (u *userHandlers) GetUser(c *gin.Context) {
 		TokenString: access,
 		UsedFor:     middleware.User,
 		TokenFor:    middleware.Access,
-	}, u.cfg.JWT.SecretKey)
+	}, u.cfg.ServiceName)
 	if err != nil {
 		return
 	}

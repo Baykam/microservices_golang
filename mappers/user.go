@@ -1,7 +1,7 @@
 package mappers
 
 import (
-	"project-microservices/api_gateway_service/dto"
+	"project-microservices/dto"
 	userServiceProto "project-microservices/user_service/proto"
 
 	uuid "github.com/satori/go.uuid"
@@ -56,5 +56,23 @@ func UserUpdateToGrpc(req dto.UserUpdateReq) *userServiceProto.PostUser {
 		UpdatedAt: timestamppb.Now(),
 		UserId:    req.UserId,
 		Email:     req.Email,
+	}
+}
+
+func UserToGrpc(req *dto.User) *userServiceProto.User {
+	return &userServiceProto.User{
+		UserId: req.UserId,
+		Phone:  req.Phone,
+		Email:  *req.Email,
+		Id:     req.ID.String(),
+	}
+}
+
+func UserFromGrpc(res *userServiceProto.User) *dto.User {
+	return &dto.User{
+		ID:     uuid.FromStringOrNil(res.Id),
+		Phone:  res.Phone,
+		UserId: res.UserId,
+		Email:  &res.Email,
 	}
 }

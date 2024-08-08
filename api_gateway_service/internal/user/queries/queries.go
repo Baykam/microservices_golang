@@ -2,8 +2,8 @@ package queries
 
 import (
 	"context"
-	"project-microservices/api_gateway_service/dto"
-	"project-microservices/api_gateway_service/mappers"
+	"project-microservices/dto"
+	"project-microservices/mappers"
 	userServiceProto "project-microservices/user_service/proto"
 )
 

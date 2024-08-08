@@ -1,4 +1,4 @@
-package service
+package queries
 
 import (
 	"context"
@@ -7,7 +7,7 @@ import (
 	uuid "github.com/satori/go.uuid"
 )
 
-func (u *userService) VerificationKey(ctx context.Context, req *userServiceProto.PhoneVerificationReq) (*userServiceProto.PhoneVerificationRes, error) {
+func (u *userQueries) VerificationKey(ctx context.Context, req *userServiceProto.PhoneVerificationReq) (*userServiceProto.PhoneVerificationRes, error) {
 	verificationKey := uuid.NewV4().String()
 	u.cache.SetVerificationKey(ctx, req, verificationKey)
 

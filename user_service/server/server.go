@@ -20,6 +20,7 @@ import (
 	"github.com/go-playground/validator/v10"
 	"github.com/go-redis/redis/v8"
 	"github.com/pkg/errors"
+	"github.com/segmentio/kafka-go"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -32,7 +33,8 @@ type server struct {
 	mongo        *mongo.Client
 	cacheRepo    cache.UserCache
 	postgresRepo repository.UserRepository
-	userService  service.UserService
+	userService  *service.UserService
+	kafka        *kafka.Conn
 }
 
 func NewServer(log logger.Logger, cfg *config.Config) *server {
@@ -64,6 +66,11 @@ func (s *server) Run() error {
 
 	kafkaConsumerGroup := productKafka.NewConsumerGroup(s.cfg.Kafka.Brokers, s.cfg.Kafka.GroupId, s.log)
 	go kafkaConsumerGroup.ConsumeTopic(ctx, s.getConsumerGroupTopics(), userKafkaConn.PoolSize, userMessageProcessor.ProcessMessages)
+
+	if err := s.connectKafkaBrokers(ctx); err != nil {
+		return errors.Wrap(err, "s.connectKafkaBrokers")
+	}
+	defer s.kafka.Close()
 
 	go func() {
 		if err := s.newUserGrpcServer(); err != nil {

@@ -10,7 +10,6 @@ import (
 	u "project-microservices/api_gateway_service/internal/user/service"
 	"project-microservices/api_gateway_service/metrics"
 
-	// _ "project-microservices/docs"
 	"project-microservices/pkg/interceptors"
 	productKafka "project-microservices/pkg/kafka"
 	"project-microservices/pkg/logger"
@@ -51,12 +50,11 @@ func (s *server) Run() error {
 	}
 	defer userConn.Close()
 	userProtoService := userServiceProto.NewUserServiceClient(userConn)
-	kafkaProducers := productKafka.NewProducer(s.log, []string{})
+	kafkaProducers := productKafka.NewProducer(s.log, s.cfg.Kafka.Brokers)
 	defer kafkaProducers.Close()
 
-	s.userService = u.NewUserService(s.log, *s.cfg, kafkaProducers, userProtoService)
-	userGroupGin := s.engine.Group("/auth")
-	users := userHttp.NewUserHandlers(*s.cfg, s.log, *s.v, userGroupGin, &s.metrics, *s.userService)
+	s.userService = u.NewUserService(s.log, s.cfg, kafkaProducers, userProtoService)
+	users := userHttp.NewUserHandlers(s.cfg, s.log, *s.v, s.engine, s.metrics, s.userService)
 	users.Run()
 
 	s.engine.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))

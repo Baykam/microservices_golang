@@ -1,4 +1,4 @@
-package service
+package queries
 
 import (
 	"context"
@@ -9,7 +9,7 @@ import (
 	uuid "github.com/satori/go.uuid"
 )
 
-func (u *userService) PhoneUserCreate(ctx context.Context, req *userServiceProto.UserPhoneCreateReq) (*userServiceProto.UserPhoneCreateRes, error) {
+func (u *userQueries) PhoneUserCreate(ctx context.Context, req *userServiceProto.UserPhoneCreateReq) (*userServiceProto.UserPhoneCreateRes, error) {
 	phone, err := u.cache.GetVerificationKey(ctx, req)
 	if err != nil {
 		return nil, err

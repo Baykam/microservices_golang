@@ -7,10 +7,12 @@ import (
 )
 
 type User struct {
-	ID     uuid.UUID `json:"id"`
-	Phone  string    `json:"phone"`
-	UserId string    `json:"user_id"`
-	Email  *string   `json:"email"`
+	ID        uuid.UUID `json:"id"`
+	Phone     string    `json:"phone"`
+	UserId    string    `json:"user_id"`
+	Email     *string   `json:"email"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
 }
 
 type PhoneVerificationReq struct {

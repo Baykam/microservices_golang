@@ -46,7 +46,7 @@ func (s *server) newUserGrpcServer() error {
 		)),
 	)
 
-	userServiceProto.RegisterUserServiceServer(grpcServer, s.userService)
+	userServiceProto.RegisterUserServiceServer(grpcServer, s.userService.Queries)
 	grpc_prometheus.Register(grpcServer)
 
 	return grpcServer.Serve(lis)

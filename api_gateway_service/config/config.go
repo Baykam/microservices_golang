@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"project-microservices/pkg/constants"
+	productKafka "project-microservices/pkg/kafka"
 	"project-microservices/pkg/logger"
 	"project-microservices/pkg/probes"
 	"project-microservices/pkg/tracing"
@@ -20,13 +21,15 @@ var configPath string
 // }
 
 type Config struct {
-	ServiceName string          `mapstructure:"serviceName"`
-	Logger      *logger.Config  `mapstructure:"logger"`
-	Http        Http            `mapstructure:"http"`
-	Grpc        Grpc            `mapstructure:"grpc"`
-	Probes      probes.Config   `mapstructure:"probes"`
-	Jaeger      *tracing.Config `mapstructure:"jaeger"`
-	JWT         Jwt             `mapstructure:"jwt"`
+	ServiceName string               `mapstructure:"serviceName"`
+	Logger      *logger.Config       `mapstructure:"logger"`
+	Http        Http                 `mapstructure:"http"`
+	Grpc        Grpc                 `mapstructure:"grpc"`
+	Probes      probes.Config        `mapstructure:"probes"`
+	Jaeger      *tracing.Config      `mapstructure:"jaeger"`
+	JWT         Jwt                  `mapstructure:"jwt"`
+	KafkaTopics KafkaTopics          `mapstructure:"kafkaTopics"`
+	Kafka       *productKafka.Config `mapstructure:"kafka"`
 }
 
 type Http struct {
@@ -46,6 +49,12 @@ type Grpc struct {
 
 type Jwt struct {
 	SecretKey string `mapstructure:"secretKey"`
+}
+
+type KafkaTopics struct {
+	UserCreated productKafka.TopicConfig `mapstructure:"userCreated"`
+	UserUpdated productKafka.TopicConfig `mapstructure:"userUpdated"`
+	UserDeleted productKafka.TopicConfig `mapstructure:"userDeleted"`
 }
 
 func InitConfig() (*Config, error) {
