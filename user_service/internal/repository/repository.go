@@ -12,6 +12,7 @@ type userRepository struct {
 
 type UserRepository interface {
 	CreateUserWithPhone(ctx context.Context, phone, userId string) error
+	GetUser()
 }
 
 func NewUserRepository(sql *sql.DB,

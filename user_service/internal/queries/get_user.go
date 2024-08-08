@@ -6,5 +6,6 @@ import (
 )
 
 func (u *userQueries) GetUser(ctx context.Context, req *userServiceProto.GetUser) (*userServiceProto.User, error) {
+
 	return nil, nil
 }

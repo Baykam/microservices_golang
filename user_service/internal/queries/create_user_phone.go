@@ -34,7 +34,7 @@ func (u *userQueries) PhoneUserCreate(ctx context.Context, req *userServiceProto
 		TokenFor: middleware.Refresh,
 		UsedFor:  userType,
 		ExpireAt: <-time.After(RefreshTokenExpired),
-	}, "")
+	}, u.cfg.ServiceName)
 	if err != nil {
 		return nil, err
 	}
@@ -44,7 +44,7 @@ func (u *userQueries) PhoneUserCreate(ctx context.Context, req *userServiceProto
 		TokenFor: middleware.Access,
 		UsedFor:  userType,
 		ExpireAt: <-time.After(AccessTokenExpired),
-	}, "")
+	}, u.cfg.ServiceName)
 	if err != nil {
 		return nil, err
 	}
