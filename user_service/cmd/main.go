@@ -19,7 +19,7 @@ func main() {
 
 	applogger := logger.NewAppLogger(cfg.Logger)
 
-	sv := server.NewServer(applogger, *cfg)
+	sv := server.NewServer(applogger, cfg)
 	if err := sv.Run(); err != nil {
 		errors.Wrap(err, "Run.UserService")
 	}

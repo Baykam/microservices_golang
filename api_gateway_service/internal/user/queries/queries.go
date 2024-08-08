@@ -4,12 +4,11 @@ import (
 	"context"
 	"project-microservices/api_gateway_service/dto"
 	"project-microservices/api_gateway_service/mappers"
-	"project-microservices/pkg/middleware"
 	userServiceProto "project-microservices/user_service/proto"
 )
 
 type UserQueries interface {
-	GetVerificationKey(ctx context.Context, req dto.PhoneVerificationReq) (*dto.PhoneVerificationRes, error)
+	GetVerificationKey(ctx context.Context, req *dto.PhoneVerificationReq) (*dto.PhoneVerificationRes, error)
 	CreateUserWithPhone(ctx context.Context, req dto.UserCreateReq) (*dto.UserCreateRes, error)
 	GetUser(ctx context.Context, req dto.GetUserReq) (*dto.User, error)
 	UpdateUser(ctx context.Context, req dto.UserUpdateReq) (*dto.User, error)
@@ -17,7 +16,6 @@ type UserQueries interface {
 
 type userQueries struct {
 	client userServiceProto.UserServiceClient
-	middle middleware.MiddlewareAuth
 }
 
 func NewUserQueries(client userServiceProto.UserServiceClient) UserQueries {
@@ -33,7 +31,7 @@ func (q *userQueries) CreateUserWithPhone(ctx context.Context, req dto.UserCreat
 	return createDto, nil
 }
 
-func (q *userQueries) GetVerificationKey(ctx context.Context, req dto.PhoneVerificationReq) (*dto.PhoneVerificationRes, error) {
+func (q *userQueries) GetVerificationKey(ctx context.Context, req *dto.PhoneVerificationReq) (*dto.PhoneVerificationRes, error) {
 	res, err := q.client.VerificationKey(ctx, mappers.UserVerificationKeyToGrpc(req))
 	if err != nil {
 		return nil, err

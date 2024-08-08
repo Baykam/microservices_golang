@@ -44,7 +44,7 @@ proto_user:
 
 swagger:
 	@echo Starting swagger generating
-	swag init -g **/**/*.go
+	swag init -g **/**/*.go -o ./api_gateway_service/cmd/docs/
 
 # ==============================================================================
 # go mod

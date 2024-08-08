@@ -1,11 +1,13 @@
 {
     "swagger": "2.0",
     "info": {
-        "description": "API Gateway Service için Swagger dokümantasyonu",
-        "title": "API Gateway Service",
+        "description": "A Tag service API in GO using gin framework",
+        "title": "Tag Service API",
         "contact": {},
         "version": "1.0"
     },
+    "host": "5001",
+    "basePath": "/api",
     "paths": {
         "/auth": {
             "get": {

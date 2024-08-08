@@ -20,9 +20,9 @@ type userService struct {
 	repo   repository.UserRepository
 	cache  cache.UserCache
 	middle middleware.MiddlewareAuth
-	cfg    config.Config
+	cfg    *config.Config
 }
 
-func NewUserService(Repo repository.UserRepository, Cache cache.UserCache, cfg config.Config) UserService {
+func NewUserService(Repo repository.UserRepository, Cache cache.UserCache, cfg *config.Config) UserService {
 	return &userService{repo: Repo, cache: Cache, cfg: cfg}
 }

@@ -19,7 +19,7 @@ type userHandlers struct {
 	cfg     config.Config
 	log     logger.Logger
 	v       validator.Validate
-	engine  *gin.Engine
+	engine  *gin.RouterGroup
 	metrics *metrics.UserMetrics
 	us      service.UserService
 	middle  middleware.MiddlewareAuth
@@ -29,7 +29,7 @@ func NewUserHandlers(
 	cfg config.Config,
 	log logger.Logger,
 	v validator.Validate,
-	engine *gin.Engine,
+	engine *gin.RouterGroup,
 	metrics *metrics.UserMetrics,
 	us service.UserService,
 ) *userHandlers {
@@ -83,7 +83,7 @@ func (u *userHandlers) VerificationKey(c *gin.Context) {
 	sp, ctx := opentracing.StartSpanFromContext(c, "apiGateway.userHandler.VerificationKey")
 	defer sp.Finish()
 
-	req := dto.PhoneVerificationReq{}
+	req := &dto.PhoneVerificationReq{}
 	if err := c.BindJSON(req); err != nil {
 		u.log.WarnMsg("BindJson", err)
 		u.traceError(sp, err)

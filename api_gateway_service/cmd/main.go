@@ -4,15 +4,20 @@ import (
 	"flag"
 	"project-microservices/api_gateway_service/config"
 	"project-microservices/api_gateway_service/server"
-	_ "project-microservices/docs"
+
 	"project-microservices/pkg/logger"
+
+	_ "project-microservices/docs"
 
 	"github.com/pkg/errors"
 )
 
-// @title API Gateway Service
+// @title Tag Service API
 // @version 1.0
-// @description API Gateway Service için Swagger dokümantasyonu
+// @description A Tag service API in GO using gin framework
+
+// @host 127.0.0.1:5001
+// @BasePath  /api
 func main() {
 	flag.Parse()
 

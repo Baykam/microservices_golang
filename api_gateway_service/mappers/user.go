@@ -8,7 +8,7 @@ import (
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
-func UserVerificationKeyToGrpc(req dto.PhoneVerificationReq) *userServiceProto.PhoneVerificationReq {
+func UserVerificationKeyToGrpc(req *dto.PhoneVerificationReq) *userServiceProto.PhoneVerificationReq {
 	return &userServiceProto.PhoneVerificationReq{
 		Phone: req.Phone,
 	}

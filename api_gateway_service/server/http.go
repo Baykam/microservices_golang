@@ -5,15 +5,14 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-
-	swaggerFiles "github.com/swaggo/files"
-	ginSwagger "github.com/swaggo/gin-swagger"
+	// swaggerFiles "github.com/swaggo/files"
+	// ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 func (s *server) runHttpServer() {
 	s.engine.SetTrustedProxies(nil)
 
-	s.engine.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+	// s.engine.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	s.engine.GET("/health", func(ctx *gin.Context) {
 		ctx.JSON(http.StatusOK, nil)
 	})

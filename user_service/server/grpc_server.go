@@ -49,11 +49,5 @@ func (s *server) newUserGrpcServer() error {
 	userServiceProto.RegisterUserServiceServer(grpcServer, s.userService)
 	grpc_prometheus.Register(grpcServer)
 
-	// go func() {
-	// 	s.log.Infof("Reader gRPC server is listening on port: %s", s.cfg.GRPC.Port)
-	// 	s.log.Fatal(grpcServer.Serve(lis))
-	// }()
-
 	return grpcServer.Serve(lis)
-	// return lis.Close, grpcServer, nil
 }

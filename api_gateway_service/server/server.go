@@ -9,7 +9,8 @@ import (
 	userHttp "project-microservices/api_gateway_service/internal/user/delivery/http"
 	u "project-microservices/api_gateway_service/internal/user/service"
 	"project-microservices/api_gateway_service/metrics"
-	_ "project-microservices/docs"
+
+	// _ "project-microservices/docs"
 	"project-microservices/pkg/interceptors"
 	productKafka "project-microservices/pkg/kafka"
 	"project-microservices/pkg/logger"
@@ -18,6 +19,9 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
+
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 type server struct {
@@ -51,10 +55,11 @@ func (s *server) Run() error {
 	defer kafkaProducers.Close()
 
 	s.userService = u.NewUserService(s.log, *s.cfg, kafkaProducers, userProtoService)
-
-	users := userHttp.NewUserHandlers(*s.cfg, s.log, *s.v, s.engine, &s.metrics, *s.userService)
+	userGroupGin := s.engine.Group("/auth")
+	users := userHttp.NewUserHandlers(*s.cfg, s.log, *s.v, userGroupGin, &s.metrics, *s.userService)
 	users.Run()
 
+	s.engine.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	go s.runHttpServer()
 
 	// s.runHealthCheck(ctx)

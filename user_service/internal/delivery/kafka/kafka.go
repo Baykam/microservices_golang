@@ -2,6 +2,7 @@ package userKafkaConn
 
 import (
 	"context"
+	"fmt"
 	"project-microservices/pkg/logger"
 	"project-microservices/user_service/config"
 	"project-microservices/user_service/internal/service"
@@ -39,7 +40,8 @@ func (u *userMessageProcessor) ProcessMessages(ctx context.Context, reader *kafk
 
 		message, err := reader.FetchMessage(ctx)
 		if err != nil {
-			u.log.Warnf("workerId : %v, err : %v", workerId, err)
+			// u.log.Infof("workerId : %v, err : %v", workerId, err)
+			fmt.Printf("workerId : %v, err : %v", workerId, err)
 			continue
 		}
 

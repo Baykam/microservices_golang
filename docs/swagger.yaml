@@ -1,3 +1,4 @@
+basePath: /api
 definitions:
   dto.PhoneVerificationRes:
     properties:
@@ -24,10 +25,11 @@ definitions:
       user_type:
         type: integer
     type: object
+host: "5001"
 info:
   contact: {}
-  description: API Gateway Service için Swagger dokümantasyonu
-  title: API Gateway Service
+  description: A Tag service API in GO using gin framework
+  title: Tag Service API
   version: "1.0"
 paths:
   /auth:

@@ -1,28 +1,21 @@
 package server
 
-import (
-	"context"
-	productKafka "project-microservices/pkg/kafka"
+// func (s *server) connectKafkaBrokers(ctx context.Context) error {
+// 	kafkaConn, err := productKafka.NewKafkaConn(ctx, s.cfg.Kafka)
+// 	if err != nil {
+// 		return errors.Wrap(err, "kafka.NewConnection")
+// 	}
+// 	s.kafka = kafkaConn
 
-	"github.com/pkg/errors"
-)
+// 	brokers, err := kafkaConn.Brokers()
+// 	if err != nil {
+// 		return errors.Wrap(err, "kafkaConn.Brokers")
+// 	}
 
-func (s *server) connectKafkaBrokers(ctx context.Context) error {
-	kafkaConn, err := productKafka.NewKafkaConn(ctx, s.cfg.Kafka)
-	if err != nil {
-		return errors.Wrap(err, "kafka.NewConnection")
-	}
-	s.kafka = kafkaConn
+// 	s.log.Infof("kafka connected to brokeres: %sv", brokers)
 
-	brokers, err := kafkaConn.Brokers()
-	if err != nil {
-		return errors.Wrap(err, "kafkaConn.Brokers")
-	}
-
-	s.log.Infof("kafka connected to brokeres: %sv", brokers)
-
-	return nil
-}
+// 	return nil
+// }
 
 func (s *server) getConsumerGroupTopics() []string {
 	return []string{

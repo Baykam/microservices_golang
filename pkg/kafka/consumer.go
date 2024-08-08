@@ -2,6 +2,7 @@ package productKafka
 
 import (
 	"context"
+	"fmt"
 	"project-microservices/pkg/logger"
 	"sync"
 
@@ -26,7 +27,7 @@ type consumerGroup struct {
 
 func NewConsumerGroup(brokers []string,
 	groupId string,
-	log logger.Logger) *consumerGroup {
+	log logger.Logger) ConsumerGroup {
 	return &consumerGroup{log: log, Brokers: brokers, GroupId: groupId}
 }
 
@@ -65,6 +66,8 @@ func (c *consumerGroup) GetNewKafkaWriter() *kafka.Writer {
 
 // ConsumeTopic start consumer group with given worker and pool size
 func (c *consumerGroup) ConsumeTopic(ctx context.Context, groupTopics []string, poolSize int, worker Worker) {
+	fmt.Printf("Starting consumer groupID: %s, topic: %+v, pool size: %v", c.GroupId, groupTopics, poolSize)
+
 	r := c.GetNewKafkaReader(c.Brokers, groupTopics, c.GroupId)
 
 	defer func() {
@@ -72,7 +75,7 @@ func (c *consumerGroup) ConsumeTopic(ctx context.Context, groupTopics []string, 
 			c.log.Warnf("consumerGroup.r.Close: %v", err)
 		}
 	}()
-	c.log.Infof("Starting consumer groupID: %s, topic: %+v, pool size: %v", c.GroupId, groupTopics, poolSize)
+	// c.log.Infof("Starting consumer groupID: %s, topic: %+v, pool size: %v", c.GroupId, groupTopics, poolSize)
 
 	wg := &sync.WaitGroup{}
 	for i := 0; i <= poolSize; i++ {
