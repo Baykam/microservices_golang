@@ -27,6 +27,7 @@ func main() {
 	}
 
 	appLogger := logger.NewAppLogger(cfg.Logger)
+	appLogger.InitLogger()
 
 	sv := server.NewServer(appLogger, cfg)
 	if err := sv.Run(); err != nil {

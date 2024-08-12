@@ -35,14 +35,13 @@ func (s *server) runHealthCheck(ctx context.Context) {
 }
 
 func (s *server) runMetrics(cancel context.CancelFunc) {
-	server := gin.New()
-	server.Use(gin.Recovery())
-	server.GET(s.cfg.Probes.PrometheusPath, gin.WrapH(promhttp.Handler()))
+	s.engine.Use(gin.Recovery())
+	s.engine.GET(s.cfg.Probes.PrometheusPath, gin.WrapH(promhttp.Handler()))
 	go func() {
 		s.log.Infof("Metrics server is listening : %s", s.cfg.Probes.PrometheusPort)
 		ss := &http.Server{
 			Addr:         s.cfg.Probes.PrometheusPort,
-			Handler:      server,
+			Handler:      s.engine,
 			ReadTimeout:  readTimeout,
 			WriteTimeout: writeTimeout,
 		}

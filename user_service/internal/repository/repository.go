@@ -15,9 +15,6 @@ type UserRepository interface {
 	GetUser()
 }
 
-func NewUserRepository(sql *sql.DB,
-
-// mongo mongo.Client,
-) UserRepository {
+func NewUserRepository(sql *sql.DB) UserRepository {
 	return &userRepository{sql: sql}
 }

@@ -15,6 +15,7 @@ import (
 	userKafkaConn "project-microservices/user_service/internal/delivery/kafka"
 	"project-microservices/user_service/internal/repository"
 	"project-microservices/user_service/internal/service"
+	"project-microservices/user_service/metrics"
 	"syscall"
 
 	"github.com/go-playground/validator/v10"
@@ -35,6 +36,7 @@ type server struct {
 	postgresRepo repository.UserRepository
 	userService  *service.UserService
 	kafka        *kafka.Conn
+	metrics      *metrics.UserServiceMetrics
 }
 
 func NewServer(log logger.Logger, cfg *config.Config) *server {
@@ -44,6 +46,8 @@ func NewServer(log logger.Logger, cfg *config.Config) *server {
 func (s *server) Run() error {
 	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM, syscall.SIGINT)
 	defer cancel()
+
+	s.metrics = metrics.NewUserServiceMetrics(s.cfg)
 
 	s.redis = productRedis.ConnRedis(s.cfg.Redis)
 	mongoClient, err := mongodb.NewMongoDbConn(ctx, s.cfg.Mongo)
@@ -60,7 +64,7 @@ func (s *server) Run() error {
 	s.cacheRepo = cache.NewUserCache(s.log, s.cfg, s.redis)
 	s.postgresRepo = repository.NewUserRepository(s.sql)
 
-	s.userService = service.NewUserService(s.postgresRepo, s.cacheRepo, s.cfg)
+	s.userService = service.NewUserService(s.postgresRepo, s.cacheRepo, s.cfg, s.metrics)
 
 	userMessageProcessor := userKafkaConn.NewUserMessagesProcessor(s.log, s.cfg, s.v, s.userService)
 

@@ -12,7 +12,7 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
-func (c *commandsHandler) UpdateUser(ctx context.Context, req dto.UserUpdateReq) error {
+func (c *commandsHandler) UpdateUser(ctx context.Context, req *dto.UserUpdateReq) error {
 	span, ctx := opentracing.StartSpanFromContext(ctx, "apiGateWayService.Commands.updateUser")
 	defer span.Finish()
 

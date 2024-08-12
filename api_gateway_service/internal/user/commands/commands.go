@@ -8,7 +8,7 @@ import (
 )
 
 type Commands interface {
-	UpdateUser(ctx context.Context, req dto.UserUpdateReq) error
+	UpdateUser(ctx context.Context, req *dto.UserUpdateReq) error
 }
 
 type commandsHandler struct {

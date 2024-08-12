@@ -16,10 +16,6 @@ import (
 
 var configPath string
 
-// func init() {
-// 	flag.StringVar(&configPath, "config", "", "API Gateway microservice config path")
-// }
-
 type Config struct {
 	ServiceName string               `mapstructure:"serviceName"`
 	Logger      *logger.Config       `mapstructure:"logger"`

@@ -18,9 +18,6 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
-
-	swaggerFiles "github.com/swaggo/files"
-	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 type server struct {
@@ -57,11 +54,10 @@ func (s *server) Run() error {
 	users := userHttp.NewUserHandlers(s.cfg, s.log, *s.v, s.engine, s.metrics, s.userService)
 	users.Run()
 
-	s.engine.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	go s.runHttpServer()
 
-	// s.runHealthCheck(ctx)
-	// s.runMetrics(cancel)
+	s.runHealthCheck(ctx)
+	s.runMetrics(cancel)
 
 	<-ctx.Done()
 	return nil

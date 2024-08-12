@@ -128,7 +128,7 @@ func (u *userHandlers) UpdateUser(c *gin.Context) {
 		return
 	}
 
-	req := dto.UserUpdateReq{}
+	req := &dto.UserUpdateReq{}
 	if err := c.BindJSON(req); err != nil {
 		u.log.WarnMsg("BindJson", err)
 		u.traceError(span, err)

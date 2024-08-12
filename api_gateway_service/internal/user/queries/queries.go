@@ -11,7 +11,7 @@ type UserQueries interface {
 	GetVerificationKey(ctx context.Context, req *dto.PhoneVerificationReq) (*dto.PhoneVerificationRes, error)
 	CreateUserWithPhone(ctx context.Context, req dto.UserCreateReq) (*dto.UserCreateRes, error)
 	GetUser(ctx context.Context, req dto.GetUserReq) (*dto.User, error)
-	UpdateUser(ctx context.Context, req dto.UserUpdateReq) (*dto.User, error)
+	UpdateUser(ctx context.Context, req *dto.UserUpdateReq) (*dto.User, error)
 }
 
 type userQueries struct {
@@ -49,7 +49,7 @@ func (q *userQueries) GetUser(ctx context.Context, req dto.GetUserReq) (*dto.Use
 	return last, nil
 }
 
-func (q *userQueries) UpdateUser(ctx context.Context, req dto.UserUpdateReq) (*dto.User, error) {
+func (q *userQueries) UpdateUser(ctx context.Context, req *dto.UserUpdateReq) (*dto.User, error) {
 	res, err := q.client.UpdateUserData(ctx, mappers.UserUpdateToGrpc(req))
 	if err != nil {
 		return nil, err

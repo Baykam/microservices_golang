@@ -17,9 +17,10 @@ func main() {
 		errors.Wrap(err, "InitConfig.UserService")
 	}
 
-	applogger := logger.NewAppLogger(cfg.Logger)
+	appLogger := logger.NewAppLogger(cfg.Logger)
+	appLogger.InitLogger()
 
-	sv := server.NewServer(applogger, cfg)
+	sv := server.NewServer(appLogger, cfg)
 	if err := sv.Run(); err != nil {
 		errors.Wrap(err, "Run.UserService")
 	}

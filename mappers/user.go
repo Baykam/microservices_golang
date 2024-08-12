@@ -49,7 +49,7 @@ func GetUserFromGrpc(res *userServiceProto.User) *dto.User {
 	}
 }
 
-func UserUpdateToGrpc(req dto.UserUpdateReq) *userServiceProto.PostUser {
+func UserUpdateToGrpc(req *dto.UserUpdateReq) *userServiceProto.PostUser {
 	return &userServiceProto.PostUser{
 		Phone:     req.Phone,
 		Username:  req.Username,

@@ -6,6 +6,7 @@ import (
 	"project-microservices/user_service/internal/commands"
 	"project-microservices/user_service/internal/queries"
 	"project-microservices/user_service/internal/repository"
+	"project-microservices/user_service/metrics"
 )
 
 type UserService struct {
@@ -13,7 +14,7 @@ type UserService struct {
 	Commands commands.Commands
 }
 
-func NewUserService(Repo repository.UserRepository, Cache cache.UserCache, cfg *config.Config) *UserService {
+func NewUserService(Repo repository.UserRepository, Cache cache.UserCache, cfg *config.Config, metrics *metrics.UserServiceMetrics) *UserService {
 	queries := queries.NewUserQueries(Repo, Cache, cfg)
 	commands := commands.NewUserCommands(Repo, Cache, cfg)
 	return &UserService{Queries: queries, Commands: commands}
