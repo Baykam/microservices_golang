@@ -7,17 +7,9 @@ import (
 
 	"project-microservices/pkg/logger"
 
-	_ "project-microservices/docs"
-
 	"github.com/pkg/errors"
 )
 
-// @title Tag Service API
-// @version 1.0
-// @description A Tag service API in GO using gin framework
-
-// @host 127.0.0.1:5001
-// @BasePath  /api
 func main() {
 	flag.Parse()
 

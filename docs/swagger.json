@@ -1,13 +1,8 @@
 {
     "swagger": "2.0",
     "info": {
-        "description": "A Tag service API in GO using gin framework",
-        "title": "Tag Service API",
-        "contact": {},
-        "version": "1.0"
+        "contact": {}
     },
-    "host": "5001",
-    "basePath": "/api",
     "paths": {
         "/auth": {
             "get": {
@@ -112,6 +107,9 @@
         "dto.User": {
             "type": "object",
             "properties": {
+                "created_at": {
+                    "type": "string"
+                },
                 "email": {
                     "type": "string"
                 },
@@ -119,6 +117,9 @@
                     "type": "string"
                 },
                 "phone": {
+                    "type": "string"
+                },
+                "updated_at": {
                     "type": "string"
                 },
                 "user_id": {

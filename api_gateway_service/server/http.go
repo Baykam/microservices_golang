@@ -5,6 +5,8 @@ import (
 
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
+
+	_ "project-microservices/docs"
 )
 
 func (s *server) runHttpServer() {
