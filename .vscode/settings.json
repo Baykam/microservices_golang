@@ -1,5 +1,6 @@
 {
     "cSpell.words": [
         "bufconn"
-    ]
+    ],
+    "makefile.configureOnOpen": false
 }
