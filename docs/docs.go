@@ -25,7 +25,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Get User v1"
+                    "Auth"
                 ],
                 "summary": "Get User",
                 "responses": {
@@ -46,9 +46,20 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Update User v1"
+                    "Auth"
                 ],
                 "summary": "Update User",
+                "parameters": [
+                    {
+                        "description": "Update User Request",
+                        "name": "user_update",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.UserUpdateReq"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -69,9 +80,20 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "LoginPhone v1"
+                    "Auth"
                 ],
                 "summary": "loginUser",
+                "parameters": [
+                    {
+                        "description": "Verification Key And SMS Request",
+                        "name": "verificationKey",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.UserCreateReq"
+                        }
+                    }
+                ],
                 "responses": {
                     "201": {
                         "description": "Created",
@@ -92,9 +114,20 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "VerificationKey v1"
+                    "Auth"
                 ],
                 "summary": "verification for Phone",
+                "parameters": [
+                    {
+                        "description": "Phone Verification Request",
+                        "name": "phone_verification",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.PhoneVerificationReq"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -107,6 +140,14 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "dto.PhoneVerificationReq": {
+            "type": "object",
+            "properties": {
+                "phone": {
+                    "type": "string"
+                }
+            }
+        },
         "dto.PhoneVerificationRes": {
             "type": "object",
             "properties": {
@@ -138,6 +179,17 @@ const docTemplate = `{
                 }
             }
         },
+        "dto.UserCreateReq": {
+            "type": "object",
+            "properties": {
+                "sms": {
+                    "type": "string"
+                },
+                "verification_key": {
+                    "type": "string"
+                }
+            }
+        },
         "dto.UserCreateRes": {
             "type": "object",
             "properties": {
@@ -149,6 +201,26 @@ const docTemplate = `{
                 },
                 "user_type": {
                     "type": "integer"
+                }
+            }
+        },
+        "dto.UserUpdateReq": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "phone": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "string"
+                },
+                "userId": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
                 }
             }
         }

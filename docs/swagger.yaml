@@ -1,4 +1,9 @@
 definitions:
+  dto.PhoneVerificationReq:
+    properties:
+      phone:
+        type: string
+    type: object
   dto.PhoneVerificationRes:
     properties:
       verification_key:
@@ -19,6 +24,13 @@ definitions:
       user_id:
         type: string
     type: object
+  dto.UserCreateReq:
+    properties:
+      sms:
+        type: string
+      verification_key:
+        type: string
+    type: object
   dto.UserCreateRes:
     properties:
       access_token:
@@ -27,6 +39,19 @@ definitions:
         type: string
       user_type:
         type: integer
+    type: object
+  dto.UserUpdateReq:
+    properties:
+      email:
+        type: string
+      phone:
+        type: string
+      updatedAt:
+        type: string
+      userId:
+        type: string
+      username:
+        type: string
     type: object
 info:
   contact: {}
@@ -45,11 +70,18 @@ paths:
             $ref: '#/definitions/dto.User'
       summary: Get User
       tags:
-      - Get User v1
+      - Auth
     post:
       consumes:
       - application/json
       description: Update User
+      parameters:
+      - description: Update User Request
+        in: body
+        name: user_update
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UserUpdateReq'
       produces:
       - application/json
       responses:
@@ -59,12 +91,19 @@ paths:
             $ref: '#/definitions/dto.User'
       summary: Update User
       tags:
-      - Update User v1
+      - Auth
   /auth/login:
     post:
       consumes:
       - application/json
       description: Phone needed verificationKey && SMS
+      parameters:
+      - description: Verification Key And SMS Request
+        in: body
+        name: verificationKey
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UserCreateReq'
       produces:
       - application/json
       responses:
@@ -74,12 +113,19 @@ paths:
             $ref: '#/definitions/dto.UserCreateRes'
       summary: loginUser
       tags:
-      - LoginPhone v1
+      - Auth
   /auth/verification:
     post:
       consumes:
       - application/json
       description: Phone send
+      parameters:
+      - description: Phone Verification Request
+        in: body
+        name: phone_verification
+        required: true
+        schema:
+          $ref: '#/definitions/dto.PhoneVerificationReq'
       produces:
       - application/json
       responses:
@@ -89,5 +135,5 @@ paths:
             $ref: '#/definitions/dto.PhoneVerificationRes'
       summary: verification for Phone
       tags:
-      - VerificationKey v1
+      - Auth
 swagger: "2.0"

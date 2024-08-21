@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/gin-gonic/gin"
 	"github.com/heptiolabs/healthcheck"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
@@ -34,7 +35,7 @@ func (s *server) runHealthCheck(ctx context.Context) {
 }
 
 func (s *server) runMetrics(cancel context.CancelFunc) {
-	http.Handle(s.cfg.Probes.PrometheusPath, promhttp.Handler())
+	s.engine.GET(s.cfg.Probes.PrometheusPath, gin.WrapH(promhttp.Handler()))
 	go func() {
 		s.log.Infof("Metrics server is listening : %s", s.cfg.Probes.PrometheusPort)
 		ss := &http.Server{

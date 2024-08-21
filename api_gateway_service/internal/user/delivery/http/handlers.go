@@ -38,11 +38,12 @@ func NewUserHandlers(
 }
 
 // LoginUser For phone
-// @Tags LoginPhone v1
+// @Tags Auth
 // @Summary loginUser
 // @Description Phone needed verificationKey && SMS
 // @Accept json
 // @Produce json
+// @Param   verificationKey body dto.UserCreateReq true "Verification Key And SMS Request"
 // @Success 201 {object} dto.UserCreateRes
 // @Router /auth/login [post]
 func (u *userHandlers) LoginUser(c *gin.Context) {
@@ -71,11 +72,12 @@ func (u *userHandlers) LoginUser(c *gin.Context) {
 }
 
 // VerificationKey For phone
-// @Tags VerificationKey v1
+// @Tags Auth
 // @Summary verification for Phone
 // @Description Phone send
 // @Accept json
 // @Produce json
+// @Param   phone_verification body dto.PhoneVerificationReq true "Phone Verification Request"
 // @Success 200 {object} dto.PhoneVerificationRes
 // @Router /auth/verification [post]
 func (u *userHandlers) VerificationKey(c *gin.Context) {
@@ -103,11 +105,12 @@ func (u *userHandlers) VerificationKey(c *gin.Context) {
 }
 
 // Update User
-// @Tags Update User v1
+// @Tags Auth
 // @Summary Update User
 // @Description Update User
 // @Accept json
 // @Produce json
+// @Param   user_update body dto.UserUpdateReq true "Update User Request"
 // @Success 200 {object} dto.User
 // @Router /auth [post]
 func (u *userHandlers) UpdateUser(c *gin.Context) {
@@ -155,7 +158,7 @@ func (u *userHandlers) UpdateUser(c *gin.Context) {
 }
 
 // Get User
-// @Tags Get User v1
+// @Tags Auth
 // @Summary Get User
 // @Description Get User
 // @Accept json
