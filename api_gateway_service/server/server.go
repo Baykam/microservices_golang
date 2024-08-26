@@ -25,7 +25,7 @@ type server struct {
 	cfg         *config.Config
 	v           *validator.Validate
 	im          interceptors.InterceptorManager
-	metrics     metrics.UserMetrics
+	metrics     *metrics.UserMetrics
 	userService *u.UserService
 	engine      *gin.Engine
 }
@@ -39,7 +39,7 @@ func (s *server) Run() error {
 	defer cancel()
 
 	s.im = interceptors.NewInterceptorManager(s.log)
-	s.metrics = *metrics.NewUserMetrics(s.cfg)
+	s.metrics = metrics.NewUserMetrics(s.cfg)
 
 	userConn, err := userConnection.ConnectGRPCService(ctx, s.cfg.Grpc.UserServicePort, s.im)
 	if err != nil {

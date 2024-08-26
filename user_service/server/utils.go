@@ -2,9 +2,12 @@ package server
 
 import (
 	"context"
+	"net/http"
 	productKafka "project-microservices/pkg/kafka"
 
+	"github.com/gin-gonic/gin"
 	"github.com/pkg/errors"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 func (s *server) connectKafkaBrokers(ctx context.Context) error {
@@ -30,4 +33,20 @@ func (s *server) getConsumerGroupTopics() []string {
 		s.cfg.KafkaTopics.UserDeleted.TopicName,
 		s.cfg.KafkaTopics.UserUpdated.TopicName,
 	}
+}
+
+func (s *server) runMetrics(cancel context.CancelFunc) {
+	engine := gin.Default()
+	engine.GET(s.cfg.Probes.PrometheusPath, gin.WrapH(promhttp.Handler()))
+	go func() {
+		s.log.Infof("Metrics server is listening : %s", s.cfg.Probes.PrometheusPort)
+		ss := &http.Server{
+			Addr:    s.cfg.Probes.PrometheusPort,
+			Handler: engine,
+		}
+		if err := ss.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+			s.log.Errorf("metrics.Start:%v", err)
+			cancel()
+		}
+	}()
 }

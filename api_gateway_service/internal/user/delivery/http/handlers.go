@@ -21,7 +21,7 @@ type userHandlers struct {
 	log     logger.Logger
 	v       validator.Validate
 	engine  *gin.Engine
-	metrics metrics.UserMetrics
+	metrics *metrics.UserMetrics
 	us      *service.UserService
 	middle  middleware.MiddlewareAuth
 }
@@ -31,7 +31,7 @@ func NewUserHandlers(
 	log logger.Logger,
 	v validator.Validate,
 	engine *gin.Engine,
-	metrics metrics.UserMetrics,
+	metrics *metrics.UserMetrics,
 	us *service.UserService,
 ) *userHandlers {
 	return &userHandlers{cfg: cfg, log: log, v: v, engine: engine, metrics: metrics, us: us}

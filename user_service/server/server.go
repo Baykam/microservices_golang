@@ -82,6 +82,8 @@ func (s *server) Run() error {
 		}
 	}()
 
+	s.runMetrics(cancel)
+
 	<-ctx.Done()
 	s.log.Info("Shutting down gRPC server...")
 	return nil

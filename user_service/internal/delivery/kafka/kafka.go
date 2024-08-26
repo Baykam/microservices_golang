@@ -47,6 +47,7 @@ func (u *userMessageProcessor) ProcessMessages(ctx context.Context, reader *kafk
 
 		switch message.Topic {
 		case u.cfg.KafkaTopics.UserDeleted.TopicName:
+		case u.cfg.KafkaTopics.UserCreated.TopicName:
 		case u.cfg.KafkaTopics.UserUpdated.TopicName:
 			u.updateUser(ctx, reader, message)
 		}
